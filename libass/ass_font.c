@@ -269,14 +269,22 @@ void ass_face_set_size(FT_Face face, double size)
     // The idea was borrowed from asa (http://asa.diac24.net)
     if (os2) {
         int ft_height = 0;
+        int sTypo_height = os2->sTypoAscender - os2->sTypoDescender;
+        int usWin_height = (short)os2->usWinAscent + (short)os2->usWinDescent;
         if (hori)
             ft_height = hori->Ascender - hori->Descender;
         if (!ft_height)
-            ft_height = os2->sTypoAscender - os2->sTypoDescender;
+            ft_height = sTypo_height;
         /* sometimes used for signed values despite unsigned in spec */
         int os2_height = (short)os2->usWinAscent + (short)os2->usWinDescent;
-        if (ft_height && os2_height)
-            mscale = (double) ft_height / os2_height;
+        if (ft_height && os2_height) {
+            if ((os2->fsSelection & 128) &&
+                (os2->sTypoAscender == face->ascender) &&
+                (os2->sTypoDescender == face->descender)) {
+                    ft_height = sTypo_height;
+            }
+            mscale = (double) ft_height / usWin_height;
+        }
     }
     memset(&rq, 0, sizeof(rq));
     rq.type = FT_SIZE_REQUEST_TYPE_REAL_DIM;
