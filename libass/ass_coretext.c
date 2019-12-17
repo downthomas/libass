@@ -181,6 +181,12 @@ static void match_fonts(ASS_Library *lib, ASS_FontProvider *provider,
         kCTFontNameAttribute,
     };
 
+    CFMutableDictionaryRef optionsdict =
+        CFDictionaryCreateMutable( kCFAllocatorDefault, 1,
+        &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks );
+    CFDictionaryAddValue( optionsdict,
+        kCTFontCollectionRemoveDuplicatesOption, kCFBooleanTrue );
+
     CFStringRef cfname =
         CFStringCreateWithCString(NULL, name, kCFStringEncodingUTF8);
 
@@ -194,7 +200,7 @@ static void match_fonts(ASS_Library *lib, ASS_FontProvider *provider,
         CFArrayCreate(NULL, (const void **)&ctdescrs, attributes_n, NULL);
 
     CTFontCollectionRef ctcoll =
-        CTFontCollectionCreateWithFontDescriptors(descriptors, 0);
+        CTFontCollectionCreateWithFontDescriptors(descriptors, optionsdict);
 
     CFArrayRef fontsd =
         CTFontCollectionCreateMatchingFontDescriptors(ctcoll);
@@ -203,6 +209,7 @@ static void match_fonts(ASS_Library *lib, ASS_FontProvider *provider,
 
     SAFE_CFRelease(fontsd);
     SAFE_CFRelease(ctcoll);
+    SAFE_CFRelease(optionsdict);
 
     for (int i = 0; i < attributes_n; i++) {
         SAFE_CFRelease(cfattrs[i]);
