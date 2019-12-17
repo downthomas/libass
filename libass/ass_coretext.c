@@ -146,9 +146,9 @@ static void process_descriptors(ASS_Library *lib, ASS_FontProvider *provider,
 
         char *ps_name = get_name(fontd, kCTFontNameAttribute);
 
-        if (ass_get_font_info(lib, ftlib, path, ps_name, -1, &meta)) {
+        if (ass_get_font_info(lib, ftlib, path, ps_name, index, &meta)) {
             CFRetain(fontd);
-            ass_font_provider_add_font(provider, &meta, path, index, (void*)fontd);
+            ass_font_provider_add_font(provider, &meta, path, meta.index, (void*)fontd);
         }
 
         for (int j = 0; j < meta.n_family; j++)

@@ -861,6 +861,10 @@ bool ass_get_font_info(ASS_Library *lib, FT_Library ftlib, const char *path,
         return false;
     }
 
+    if (face->num_faces == 1) {
+        info->index = 0;
+    }
+
     if (postscript_name && index < 0 && face->num_faces > 0) {
         // The font provider gave us a postscript name and is not sure
         // about the face index.. so use the postscript name to find the
@@ -875,8 +879,10 @@ bool ass_get_font_info(ASS_Library *lib, FT_Library ftlib, const char *path,
 
             const char *face_psname = FT_Get_Postscript_Name(face);
             if (face_psname != NULL &&
-                strcmp(face_psname, postscript_name) == 0)
+                strcmp(face_psname, postscript_name) == 0) {
+                info->index = i;
                 break;
+            }
         }
     }
 

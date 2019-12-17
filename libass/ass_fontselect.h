@@ -192,6 +192,7 @@ struct ass_font_provider_meta_data {
                         // See FONT_WEIGHT_*
     int width;          // Font weight in percent, normally 100
                         // See FONT_WIDTH_*
+    int index;          // font index inside font collections
 };
 
 typedef struct ass_font_stream ASS_FontStream;

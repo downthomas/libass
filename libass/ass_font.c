@@ -190,26 +190,6 @@ static int add_face(ASS_FontSelector *fontsel, ASS_Font *font, uint32_t ch)
                     "Error opening font: '%s', %d", path, index);
             return -1;
         }
-
-        if (postscript_name && index < 0 && face->num_faces > 0) {
-            // The font provider gave us a post_script name and is not sure
-            // about the face index.. so use the postscript name to find the
-            // correct face_index in the collection!
-            for (int i = 0; i < face->num_faces; i++) {
-                FT_Done_Face(face);
-                error = FT_New_Face(font->ftlibrary, path, i, &face);
-                if (error) {
-                    ass_msg(font->library, MSGL_WARN,
-                            "Error opening font: '%s', %d", path, i);
-                    return -1;
-                }
-
-                const char *face_psname = FT_Get_Postscript_Name(face);
-                if (face_psname != NULL &&
-                    strcmp(face_psname, postscript_name) == 0)
-                    break;
-            }
-        }
     }
 
     charmap_magic(font->library, face);
